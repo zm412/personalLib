@@ -3,11 +3,13 @@
 const express     = require('express');
 const bodyParser  = require('body-parser');
 const cors        = require('cors');
-require('dotenv').config();
+const config = require('./config');
 
 const apiRoutes         = require('./routes/api.js');
 const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
+//const models = require('./models');
+let mongoose = require('mongoose');
 
 const app = express();
 
@@ -36,6 +38,38 @@ app.use(function(req, res, next) {
     .type('text')
     .send('Not Found');
 });
+
+//bd
+
+
+const db = () => {
+  return new Promise((resolve, reject) => {
+    mongoose.Promise = global.Promise;
+    mongoose.set('debug', process.env.IS_PRODUCTION);
+
+    mongoose.connection
+    .on('error', error => console.log(error))
+    .on('close', () => console.log('Db connection closed'))
+    .on('open', () => resolve(mongoose.connections[0]));
+
+    mongoose.connect(config.MONGO_URI_FREECAMP, {
+              useNewUrlParser: true,
+              useFindAndModify: false,
+              useUnifiedTopology: true
+            });
+  });
+}
+
+db().
+
+  then(info => {
+  console.log((`Connected to ${info.host}:${info.port}/${info.    name}`))
+
+}).catch( () => {
+  console.error('Unable to connect to database');
+  process.exit(1)
+});
+
 
 //Start our server and tests!
 app.listen(process.env.PORT || 3000, function () {
