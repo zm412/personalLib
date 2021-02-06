@@ -8,6 +8,8 @@
 
 'use strict';
 
+const models = require('../models');
+
 module.exports = function (app) {
 
   app.route('/api/books')
@@ -18,6 +20,12 @@ module.exports = function (app) {
     
     .post(function (req, res){
       let title = req.body.title;
+      models.Library.create({
+        title 
+      })      
+        .then(book => res.json({ _id: book._id, title: book.title }))
+        .catch(err => console.log(err, 'err'))
+      
       //response will contain new book object including atleast _id and title
     })
     
