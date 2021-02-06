@@ -30,6 +30,12 @@ module.exports = function (app) {
       }else{
         res.send('missing required field title')
       }
+      models.Library.create({
+        title 
+      })      
+        .then(book => res.json({ _id: book._id, title: book.title }))
+        .catch(err => console.log(err, 'err'))
+      
       //response will contain new book object including atleast _id and title
     })
     
