@@ -22,8 +22,10 @@ $( document ).ready(function() {
   $('#display').on('click','li.bookItem',function() {
     $("#detailTitle").html('<b>'+itemsRaw[this.id].title+'</b> (id: '+itemsRaw[this.id]._id+')');
     $.getJSON('/api/books/'+itemsRaw[this.id]._id, function(data) {
+      console.log(data, 'dataHTML')
       comments = [];
       $.each(data.comments, function(i, val) {
+        console.log(val, 'val')
         comments.push('<li>' +val+ '</li>');
       });
       comments.push('<br><form id="newCommentForm"><input style="width:300px" type="text" class="form-control" id="commentToAdd" name="comment" placeholder="New Comment"></form>');

@@ -36,6 +36,13 @@ module.exports = function (app) {
     })
     
     .delete(function(req, res){
+      models.Library.deleteMany({})
+        .then(docs => {
+           console.log(docs, 'deletedAll')
+           res.send('complete delete successful')
+        })
+
+        .catch(err => console.log(err, 'errDeleteAll'))
       //if successful response will be 'complete delete successful'
     });
 
@@ -44,19 +51,21 @@ module.exports = function (app) {
   app.route('/api/books/:id')
     .get(function (req, res){
       let bookid = req.params.id;
+      models.Library.find({_id: bookid})
+        .then(book => {
+          console.log(book[0], 'book');
+          res.json(book[0])
+        })
+        .catch(err => console.log(err, 'getErr'))
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
     })
     
     .post(function(req, res){
+      console.log(req.body, 'reqBody')
       let bookid = req.params.id;
       let comment = req.body.comment;
       if(comment){
-        //Post.aggregate([{$match: {postId: 5}}, {$project: {upvotes: {$size: '$upvotes'}}}])
-        //models.Library.findOneAndUpdate({_id: bookid}, {$push: {comments: comment}, commentcount: ++commentcount})
-        //models.Library.aggregate([{ $match: {_id: bookid} }, {$project: { commentcount: {$size: 'comments'} }} ])
-        //{ $project: { value: { count: { $size: "$orders_ids" }, qty: "$qty", avg: { $divide: [ "$qty", { $size: "$orders_ids" } ] } } } },
         models.Library.findOneAndUpdate({_id: bookid},  {$push: {comments: comment}, $inc : { commentcount : 1, __v: 1 } },{       returnOriginal: false } )
-        //models.Library.findOneAndUpdate({_id: bookid},  {$set: {: comment} } )
           .then(foundBook => {
             console.log(foundBook, 'foundbook')
             res.json(foundBook) 
@@ -68,6 +77,13 @@ module.exports = function (app) {
     
     .delete(function(req, res){
       let bookid = req.params.id;
+      models.Library.deleteOne({_id: bookid})
+        .then(doc => {
+          console.log(doc, 'doc')
+          res.send('delete successful')
+        })
+        .catch(err => console.log(err, 'errDel'))
+      
       //if successful response will be 'delete successful'
     });
   
