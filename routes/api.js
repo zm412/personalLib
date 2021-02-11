@@ -22,13 +22,16 @@ module.exports = function (app) {
     })
     
     .post(function (req, res){
+      console.log(req.body, 'reqBodyPostTitle')
       let title = req.body.title;
+      console.log(title, 'title')
       if(title){
         models.Library.create({ title })      
           .then(book => res.json({ _id: book._id, title: book.title }))
           .catch(err => console.log(err, 'err'))
       
       }else{
+        console.log('hello')
           res.send('missing required field title')
       }
 
@@ -60,7 +63,7 @@ module.exports = function (app) {
               res.send('no book exists')
             }
         })
-        .catch(err => console.log(err, 'getErr'))
+        .catch(err => res.send('no book exists'))
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
     })
     
@@ -79,7 +82,7 @@ module.exports = function (app) {
             }
           })
           .catch(err => {
-            console.log(err, 'err')
+            res.send('no book exists')
           })
       }else{
         res.send('missing required field comment')
@@ -98,7 +101,7 @@ module.exports = function (app) {
             res.send('no book exists')
           }
         })
-        .catch(err => console.log(err, 'errDel'))
+        .catch(err => res.send('no book exists'))
       
       //if successful response will be 'delete successful'
     });

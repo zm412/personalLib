@@ -12,7 +12,6 @@ const schemaLib = new Schema({
 
   commentcount:{
     type: Number,
-    default: 0
    } 
    
 
