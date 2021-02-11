@@ -54,7 +54,11 @@ module.exports = function (app) {
       models.Library.find({_id: bookid})
         .then(book => {
           console.log(book[0], 'book');
-          res.json(book[0])
+            if(book.length > 0){
+              res.json(book[0])
+            }else{
+              res.send('no book exists')
+            }
         })
         .catch(err => console.log(err, 'getErr'))
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
@@ -67,10 +71,18 @@ module.exports = function (app) {
       if(comment){
         models.Library.findOneAndUpdate({_id: bookid},  {$push: {comments: comment}, $inc : { commentcount : 1, __v: 1 } },{       returnOriginal: false } )
           .then(foundBook => {
-            console.log(foundBook, 'foundbook')
-            res.json(foundBook) 
+            if(foundBook){
+              console.log(foundBook, 'foundbook')
+              res.json(foundBook) 
+            }else{
+              res.send('no book exists')
+            }
           })
-          .catch(err => console.log(err, 'err'))
+          .catch(err => {
+            console.log(err, 'err')
+          })
+      }else{
+        res.send('missing required field comment')
       }
       //json res format same as .get
     })
@@ -80,7 +92,11 @@ module.exports = function (app) {
       models.Library.deleteOne({_id: bookid})
         .then(doc => {
           console.log(doc, 'doc')
-          res.send('delete successful')
+          if(doc.deletedCount === 1){
+            res.send('delete successful')
+          }else{
+            res.send('no book exists')
+          }
         })
         .catch(err => console.log(err, 'errDel'))
       
